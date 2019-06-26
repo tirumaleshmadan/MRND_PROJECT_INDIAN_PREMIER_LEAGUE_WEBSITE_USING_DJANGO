@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>INDIAN PREMIER LEAGUE</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css" rel="stylesheet" type="text/css">
+    <style>
+        h1{
+            text-align:center;
+            margin-top:1%;
+            color:green;
+            font-size:200%;
+            float:none;
+        }
+        table{
+            margin-top:3%;
+        }
+        .add{
+            margin-left:3%;
+            margin-top:1%;
+        }
+        h2{
+            padding:1% 0% 1% 10%;
+            font-size:150%;
+            float:left;
+        }
+        .selected{
+            float:left;
+            padding:0.5% 1.5% 0.5% 1.5%;
+            background-color:green;
+            color:white;
+        }
+        .deselect{
+            float:left;
+            padding:0.5% 1.5% 0.5% 1.5%;
+            background-color:white;
+            color:green;
+        }
+        .topul{
+            margin:2% 0% 1.5% 0%;
+            list-style:none;
+        }
+        .boxa{
+            padding:5% 0% 2% 0%;
+            text-align:center;
+            background-color:green;
+            color:white;
+        }
+        .boxb{
+            padding:5% 0% 2% 0%;
+            text-align:center;
+            background-color:green;
+            color:white;
+        }
+        .center{
+            padding:5% 0% 2% 0%;
+            text-align:center;
+            background-colour:white;
+            color:red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid" style="color:white;background-color:green;">
+        <h2>INDIAN PREMIER LEAGUE</h2>
+        {% if request.user.is_authenticated %}
+           <div style="padding:1% 0% 1% 0%;margin-left:75%">
+                <h3 style="float:left;margin:2% 3% 0% 0%">WELCOME {{request.user.username}}</h3>
+                <a class="button" href="{% url 'logout_html' %}">Logout</a>
+            </div>
+        {% else %}
+            <div style="padding:1% 0% 1% 0%;margin-left:85%">
+                <a class="button" href="{% url 'login_html' %}">Login</a>
+                <a class="button" href="{% url 'signup_html' %}">Signup</a>
+            </div>
+        {% endif %}
+    </div>
+    <h1>VIVO IPL {{YEAR}}</h1>
+    <div class="container">
+        <div class="container" style="width:90%;margin-top:1%;">
+            <div class="columns">
+                <div class="column is-3 boxa">
+                    {{match.team1}}
+                </div>
+                <div class="column is-6 center">
+                    {{match.toss_winner}} won the toss and elected to {{match.toss_decision}} first<br>
+                    {% if match.result == "tie" %}
+                        match drawn<br>
+                    {% elif match.win_by_runs == 0 %}
+                        {{match.winner}} won by {{match.win_by_wickets}} wickets<br>
+                    {% elif match.win_by_wickets == 0 %}
+                        {{match.winner}} won by {{match.win_by_runs}} runs<br>
+                    {% endif %}
+                    {% if match.player_of_the_match != NULL %}
+                        PLAYER OF THE MATCH - {{match.player_of_the_match}}
+                    {% endif %}
+                </div>
+                <div class="column is-3 boxb">
+                    {{match.team2}}
+                </div>
+            </div>
+        </div>
+        <div class="container" style="width:80%;margin-top:4%;">
+            <div class="container">
+                <ul class="topul">
+                    {% if choice == 1 %}
+                        <a href="{% url 'match_html' YEAR page match.match_id 1 %}"><li class="selected">{{batting}} Commentry</li></a>
+                    {% else %}
+                        <a href="{% url 'match_html' YEAR page match.match_id 1 %}"><li class="deselect">{{batting}} Commentry</li></a>
+                    {% endif %}
+                    {% if choice == 2 %}
+                        <a href="{% url 'match_html' YEAR page match.match_id 2 %}"><li class="selected">{{bowling}} Commentry</li></a>
+                    {% else %}
+                        <a href="{% url 'match_html' YEAR page match.match_id 2 %}"><li class="deselect">{{bowling}} Commentry</li></a>
+                     {% endif %}
+                    {% if choice == 3 %}
+                        <a href="{% url 'match_html' YEAR page match.match_id 3 %}"><li class="selected">STATISTICS</li></a>
+                    {% else %}
+                        <a href="{% url 'match_html' YEAR page match.match_id 3 %}"><li class="deselect">STATISTICS</li></a>
+                     {% endif %}
+                </ul>
+            </div><br>
+            <div class="container" style="float:none;margin-top:1%;border:1px solid green">
+                {% if choice == 3 %}
+                    <div class="container" style="margin-top:2%;width:90%">
+                        <div class="columns">
+                            <div class="column is-6">
+                                <h3 style="text-align:center;margin-top:2%;font-weight:bold;color:orange">{{batting}} batting</h3>
+                                <table class="table is-striped is-fullwidth">
+                                    <tr>
+                                        <th>PLAYER NAME</th>
+                                        <th>RUNS SCORED</th>
+                                    </tr>
+                                    {% for player in top_batsmen_inning_1 %}
+                                    <tr>
+                                        <td>{{player.batsman}}</td>
+                                        <td>{{player.runs}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                            <div class="column is-6">
+                                 <h3 style="text-align:center;margin-top:2%;font-weight:bold;color:orange">{{bowling}} bowling</h3>
+                                <table class="table is-striped is-fullwidth">
+                                    <tr>
+                                        <th>PLAYER NAME</th>
+                                        <th>WICKETS TAKEN</th>
+                                    </tr>
+                                    {% for player in top_bowlers_inning_1 %}
+                                    <tr>
+                                        <td>{{player.bowler}}</td>
+                                        <td>{{player.wickets}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container" style="margin-top:2%;width:90%">
+                        <div class="columns">
+                            <div class="column is-6">
+                                <h3 style="text-align:center;margin-top:2%;font-weight:bold;color:orange">{{bowling}} bowling</h3>
+                                <table class="table is-striped is-fullwidth">
+                                    <tr>
+                                        <th>PLAYER NAME</th>
+                                        <th>RUNS SCORED</th>
+                                    </tr>
+                                    {% for player in top_batsmen_inning_2 %}
+                                    <tr>
+                                        <td>{{player.batsman}}</td>
+                                        <td>{{player.runs}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                            <div class="column is-6">
+                                <h3 style="text-align:center;margin-top:2%;font-weight:bold;color:orange">{{batting}} batting</h3>
+                                <table class="table is-striped is-fullwidth">
+                                    <tr>
+                                        <th>PLAYER NAME</th>
+                                        <th>WICKETS TAKEN</th>
+                                    </tr>
+                                    {% for player in top_bowlers_inning_2 %}
+                                    <tr>
+                                        <td>{{player.bowler}}</td>
+                                        <td>{{player.wickets}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <ul>
+                        {% for ball in deliveries %}
+                            {% if ball.player_dismissed == "" %}
+                                <li>
+                                    {{ball.over}}.{{ball.ball}} - {{ball.total_runs}} runs
+                                </li>
+                            {% else %}
+                                <li>
+                                    {{ball.over}}.{{ball.ball}} - Ohh! it's a wicket {{ball.player_dismissed}} is {{ball.dismissal_kind}}
+                                </li>
+                            {% endif %}
+                            <br>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
